@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chúc Mừng 20/10 - Lớp A9 Cuối Cấp Rực Rỡ</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600;700&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: radial-gradient(circle at center, #2d0c1f 0%, #12040c 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      padding: 20px;
+      color: #fff;
+    }
+
+    /* Canvas hiệu ứng hoa, cỏ 4 lá, pháo hoa nền động */
+    #fx-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 2;
+      max-width: 780px;
+      width: 100%;
+      text-align: center;
+      padding: 0 10px;
+    }
+
+    h1.main-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: 3rem;
+      background: linear-gradient(45deg, #ff758c, #ff7eb3, #ffd1dc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 25px rgba(255, 117, 140, 0.6);
+      margin-bottom: 20px;
+      animation: pulseTitle 2s infinite alternate;
+    }
+
+    @keyframes pulseTitle {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.03); }
+    }
+
+    /* Khung cảnh (Scene container) */
+    .scene {
+      background: rgba(35, 12, 27, 0.94);
+      backdrop-filter: blur(15px);
+      border-radius: 25px;
+      padding: 30px 25px;
+      box-shadow: 0 15px 50px rgba(255, 105, 180, 0.35);
+      border: 2px solid rgba(255, 105, 180, 0.5);
+      display: none;
+      animation: fadeInScene 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      text-align: center;
+    }
+
+    .scene.active {
+      display: block;
+    }
+
+    @keyframes fadeInScene {
+      from {
+        opacity: 0;
+        transform: scale(0.8) translateY(35px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .scene h2 {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.3rem;
+      color: #ff85a2;
+      margin-bottom: 15px;
+      text-shadow: 0 0 15px rgba(255, 133, 162, 0.6);
+    }
+
+    .scene p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: #fce4ec;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+
+    .scene p strong {
+      color: #ff477e;
+    }
+
+    /* Bìa thư mở đầu ở trang chào hỏi */
+    .envelope-wrapper {
+      position: relative;
+      width: 260px;
+      height: 180px;
+      margin: 0 auto 15px auto;
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+      border-radius: 14px;
+      box-shadow: 0 15px 40px rgba(255, 75, 43, 0.4);
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .envelope-wrapper:hover {
+      transform: translateY(-5px) scale(1.03);
+    }
+
+    .heart-seal {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.05rem;
+      color: #fff;
+      background: rgba(255, 20, 147, 0.9);
+      padding: 10px 20px;
+      border-radius: 30px;
+      box-shadow: 0 0 20px rgba(255, 20, 147, 0.8);
+      font-weight: 700;
+      white-space: nowrap;
+      border: 2px solid #fff;
+    }
+
+    /* Nút chuyển cảnh */
+    .btn-next {
+      background: linear-gradient(45deg, #ff416c, #ff4b2b);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 30px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 5px 20px rgba(255, 75, 43, 0.5);
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 10px;
+    }
+
+    .btn-next:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(255, 75, 43, 0.8);
+    }
+
+    .scene-icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+      animation: bounceIcon 2s infinite;
+    }
+
+    @keyframes bounceIcon {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    /* NHÂN VẬT ROBOT HOÀN TOÀN MỚI, THIẾT KẾ ĐẸP MẮT & SẮC NÉT */
+    .robot-container {
+      position: fixed;
+      bottom: 25px;
+      left: 20px;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      animation: robotFloat 3s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .robot-speech {
+      background: #ffffff;
+      color: #c2185b;
+      padding: 8px 14px;
+      border-radius: 14px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      max-width: 190px;
+      text-align: center;
+      position: relative;
+    }
+
+    .robot-speech::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 22px;
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 8px solid #ffffff;
+    }
+
+    .robot-body-box {
+      width: 95px;
+      height: 110px;
+      background: linear-gradient(145deg, #ff6584, #e91e63);
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 12px;
+      box-shadow: 0 10px 30px rgba(233, 30, 99, 0.5);
+      border: 3px solid #ffffff;
+      position: relative;
+    }
+
+    /* Tai nghe & Anten robot tinh tế */
+    .robot-body-box::before {
+      content: '';
+      position: absolute;
+      top: -14px;
+      width: 14px;
+      height: 14px;
+      background: #ffebee;
+      border-radius: 50%;
+      border: 3px solid #e91e63;
+      box-shadow: 0 0 8px #ff4081;
+    }
+
+    /* Màn hình LED biểu cảm khuôn mặt cực nét */
+    .robot-face-screen {
+      width: 74px;
+      height: 48px;
+      background: #10050d;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      color: #00ffcc;
+      font-weight: bold;
+      border: 2px solid rgba(255,255,255,0.5);
+      box-shadow: inset 0 0 10px rgba(0,255,204,0.7);
+    }
+
+    .robot-chest-icon {
+      font-size: 1.3rem;
+      margin-top: 10px;
+      animation: heartbeat 1.2s infinite;
+    }
+
+    @keyframes robotFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.25); }
+    }
+
+    /* Khung điều khiển nhạc */
+    .music-player {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(35, 12, 27, 0.88);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 105, 180, 0.6);
+      padding: 10px 18px;
+      border-radius: 35px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 5px 25px rgba(255, 105, 180, 0.4);
+      z-index: 10;
+    }
+
+    .music-btn {
+      background: linear-gradient(45deg, #ff416c, #ff4b2b);
+      color: white;
+      border: none;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      box-shadow: 0 0 15px rgba(255, 75, 43, 0.8);
+    }
+
+    .track-info {
+      font-size: 0.85rem;
+      color: #ffb3c6;
+      max-width: 170px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 480px) {
+      h1.main-title { font-size: 2.3rem; }
+      .scene { padding: 25px 18px; }
+      .robot-container { bottom: 15px; left: 10px; transform: scale(0.85); transform-origin: bottom left; }
+      .music-player { bottom: 15px; right: 10px; padding: 8px 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Canvas hiệu ứng hạt bay: hoa, cỏ 4 lá, pháo hoa -->
+  <canvas id="fx-canvas"></canvas>
+
+  <!-- NHÂN VẬT ROBOT MỚI, TO RÕ VÀ MƯỢT MÀ -->
+  <div class="robot-container">
+    <div class="robot-speech" id="robot-text">Nhấn mở thư nhé! ✨</div>
+    <div class="robot-body-box">
+      <div class="robot-face-screen" id="robot-face">^‿^</div>
+      <div class="robot-chest-icon">💖</div>
+    </div>
+  </div>
+
+  <div class="wrapper">
+    <h1 class="main-title">Gửi Các Bạn Nữ Lớp A9 ❤️</h1>
+
+    <!-- TRANG 1: CHÀO HỎI -->
+    <div class="scene active" id="scene-1" data-face="^‿^" data-text="Chào mừng các cậu đến với thiệp A9! ✨">
+      <div class="scene-icon">💌🍀</div>
+      <h2>Lời Chào Đầu Tiên Từ Nhóm Con Trai A9</h2>
+      <p>Gửi các bông hoa rạng rỡ và tuyệt vời nhất của tập thể lớp A9 thân yêu! Hôm nay là một ngày đặc biệt vô cùng – ngày Phụ nữ Việt Nam 20/10. Nhóm con trai chúng tớ đã ấp ủ và chuẩn bị một món quà tinh thần nho nhỏ nhưng chứa đựng vô vàn tình cảm chân thành để dành riêng cho các cậu.</p>
+      <p>Hành trình này sẽ dẫn dắt qua những thông điệp ngọt ngào và đáng nhớ nhất. Hãy cùng mở phong bì thư bí mật dưới đây để bắt đầu khám phá bất ngờ nhé!</p>
+      <div class="envelope-wrapper" onclick="nextScene(2)">
+        <div class="heart-seal">✨ Khám phá ngay thôi 🌸</div>
+      </div>
+    </div>
+
+    <!-- TRANG 2: KỶ NIỆM CUỐI CẤP -->
+    <div class="scene" id="scene-2" data-face=">w<" data-text="Kỷ niệm cuối cấp thật đáng nhớ! 📸">
+      <div class="scene-icon">📸📚</div>
+      <h2>Kỷ Niệm Cuối Cấp Đong Đầy Yêu Thương</h2>
+      <p>Thế là chúng mình đã chính thức bước vào năm học cuối cấp 2 rồi. Thời gian trôi qua nhanh như một cái chớp mắt, mới ngày nào còn bỡ ngỡ bước chân vào cánh cổng trường cấp 2 với bao sự rụt rè, mà giờ đây chúng ta đã là những anh chị lớp 9 trưởng thành, từng trải hơn rất nhiều.</p>
+      <p>Nghĩ lại những giờ ra chơi cùng nhau nô đùa dưới sân trường, những lần cùng nhau giải bài tập căng thẳng đến toát mồ hôi, hay những lúc giận hờn vu vơ rồi lại hòa nhau nhanh chóng... tất cả sẽ mãi là những ký ức thanh xuân đẹp đẽ nhất mà nhóm con trai A9 luôn cất giữ và trân trọng sâu sắc trong tim!</p>
+      <button class="btn-next" onclick="nextScene(3)">Tiếp tục lời chúc 20/10 ➔</button>
+    </div>
+
+    <!-- TRANG 3: LỜI CHÚC 1 (Tôn vinh ngày 20/10) -->
+    <div class="scene" id="scene-3" data-face="♥‿♥" data-text="Các bạn nữ A9 là số một! 🌸">
+      <div class="scene-icon">🌸✨</div>
+      <h2>Ngày Của Những Đóa Hồng A9</h2>
+      <p>Nhân dịp 20/10 năm nay, nhóm con trai xin gửi những lời chúc tốt đẹp, ngọt ngào và rực rỡ nhất đến toàn thể các bạn nữ trong lớp chúng ta. Chúc các cậu một ngày lễ tràn ngập hoa, quà và những nụ cười tươi tắn nở trên môi.</p>
+      <p>Cảm ơn các cậu vì luôn là mảnh ghép không thể thiếu, mang lại nguồn năng lượng tích cực, sự dịu dàng, đôi lúc là những trận cười giòn giã làm bừng sáng cả lớp học của chúng ta mỗi ngày. Chúc các cậu luôn xinh đẹp, yêu đời và mãi tỏa sáng rực rỡ theo cách riêng của mình!</p>
+      <button class="btn-next" onclick="nextScene(4)">Chuyển sang lời chúc thi cử ➔</button>
+    </div>
+
+    <!-- TRANG 4: LỜI CHÚC 3 (Thi đỗ NV1 cấp 3) -->
+    <div class="scene" id="scene-4" data-face="٩(◕‿◕)۶" data-text="Cố lên các sĩ tử, đỗ NV1 nhé! 🎯">
+      <div class="scene-icon">🎯🎓</div>
+      <h2>Vượt Vũ Môn Hóa Rồng - Đỗ NV1</h2>
+      <p>Chặng đường phía trước đang bước vào giai đoạn nước rút vô cùng quan trọng đối với mỗi chúng ta. Đây là lúc thử thách bản lĩnh, sự kiên trì và quyết tâm lớn nhất của các sĩ tử lớp 9.</p>
+      <p>Nhóm con trai xin gửi lời chúc chân thành và quyết tâm nhất, chúc các bạn nữ A9 sẽ ôn thi thật tốt, giữ vững một tinh thần thép, sức khỏe thật dồi dào và tự tin <strong>thi đỗ Nguyện Vọng 1 (NV1)</strong> vào ngôi trường cấp 3 mơ ước mà bản thân hằng mong đợi bấy lâu nay!</p>
+      <button class="btn-next" onclick="nextScene(5)">Tiếp tục điều ước ➔</button>
+    </div>
+
+    <!-- TRANG 5: LỜI CHÚC 4 (Mọi điều mong muốn thành sự thật) -->
+    <div class="scene" id="scene-5" data-face="(*^.^*)v" data-text="Mọi điều ước sẽ thành hiện thực! 🌟">
+      <div class="scene-icon">🌟🍀</div>
+      <h2>Mọi Điều Ước Đều Thành Hiện Thực</h2>
+      <p>Cuộc sống luôn ẩn chứa những điều kỳ diệu tuyệt vời dành cho những ai biết cố gắng và không bao giờ từ bỏ mục tiêu của mình. Nhóm tớ đặt trọn niềm tin rằng với sự thông minh, khéo léo và chăm chỉ vốn có, không thử thách nào có thể làm khó được các bạn nữ A9 tài năng.</p>
+      <p>Chúc cho mọi dự định, mong ước và khát vọng tương lai của các cậu đều sẽ nở hoa kết trái ngọt ngào. Chiếc cỏ 4 lá may mắn sẽ luôn ở bên, che chở và tiếp thêm sức mạnh cho các cậu trên mỗi bước đường đi tới đỉnh cao thành công!</p>
+      <button class="btn-next" onclick="nextScene(6)">Đến trang tổng kết cuối cùng ➔</button>
+    </div>
+
+    <!-- TRANG 6: TỔNG KẾT, LƯU GIỮ THANH XUÂN VÀ LỜI CHÀO TẠM BIỆT KẾT THÚC -->
+    <div class="scene" id="scene-6" data-face="(｡♥‿♥｡)" data-text="Lưu giữ thanh xuân A9 mãi đẹp! 💖">
+      <div class="scene-icon">🎆❤️🍀</div>
+      <h2>Lưu Giữ Thanh Xuân & Lời Tạm Biệt</h2>
+      <p>Hành trình khép lại những dòng nhắn gửi hôm nay không phải là điểm dừng, mà là bệ phóng vững chắc để chúng ta trân trọng hơn từng khoảnh khắc hiện tại bên nhau dưới mái trường cấp 2 thân yêu này.</p>
+      <p>Hy vọng rằng chiếc thiệp web nhỏ bé nhưng tràn đầy tâm huyết này sẽ là một mảnh ghép rực rỡ giúp chúng ta <strong>lưu giữ thanh xuân</strong> tuyệt đẹp của tuổi học trò A9. Chúc các bạn luôn tự tin, hạnh phúc, vững bước trên chặng đường dài phía trước và có một ngày 20/10 thật trọn vẹn ý nghĩa.</p>
+      <p>Xin gửi lời chào tạm biệt ấm áp nhất và chúc cho tất cả chúng ta đều đạt được ước mơ rực rỡ của mình! ✨💖</p>
+      <button class="btn-next" onclick="nextScene(1)">Xem lại từ đầu ↺</button>
+    </div>
+  </div>
+
+  <!-- Bảng điều khiển nhạc với tên theo đúng yêu cầu -->
+  <div class="music-player">
+    <button class="music-btn" id="music-toggle" onclick="toggleAudio()" title="Phát/Dừng">▶</button>
+    <div class="track-info" id="track-name">Nhấn để bật nhạc nè!</div>
+  </div>
+
+  <!-- Nguồn nhạc Romantic Guitars -->
+  <audio id="bg-audio" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c368c740.mp3?filename=romantic-guitars-108130.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const audio = document.getElementById('bg-audio');
+    const toggleBtn = document.getElementById('music-toggle');
+    const robotText = document.getElementById('robot-text');
+    const robotFace = document.getElementById('robot-face');
+
+    function toggleAudio() {
+      if (audio.paused) {
+        audio.play().then(() => {
+          toggleBtn.textContent = '⏸';
+        }).catch(e => {
+          console.log("Trình duyệt chặn phát tự động:", e);
+        });
+      } else {
+        audio.pause();
+        toggleBtn.textContent = '▶';
+      }
+    }
+
+    // Chuyển cảnh mượt mà + Bắn pháo hoa động + Đổi biểu cảm và lời thoại Robot
+    function nextScene(sceneNumber) {
+      document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+      const activeScene = document.getElementById('scene-' + sceneNumber);
+      activeScene.classList.add('active');
+      
+      // Đổi biểu cảm LED và bong bóng hội thoại Robot theo từng trang
+      if(activeScene.dataset.face) {
+        robotFace.textContent = activeScene.dataset.face;
+      }
+      if(activeScene.dataset.text) {
+        robotText.textContent = activeScene.dataset.text;
+      }
+
+      triggerFireworks();
+
+      // Kích hoạt phát nhạc khi người dùng tương tác chuyển trang
+      if (audio.paused) {
+        audio.play().then(() => {
+          toggleBtn.textContent = '⏸';
+        }).catch(() => {});
+      }
+    }
+
+    // Canvas xử lý hiệu ứng hạt bay nền: hoa, cỏ 4 lá, pháo hoa
+    const canvas = document.getElementById('fx-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const particles = Array.from({ length: 75 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 9 + 5,
+      speedY: Math.random() * 1.2 + 0.4,
+      speedX: Math.random() * 1.2 - 0.6,
+      type: Math.random() > 0.35 ? 'flower' : (Math.random() > 0.5 ? 'clover' : 'star'),
+      opacity: Math.random() * 0.8 + 0.2,
+      rotation: Math.random() * 360,
+      rotSpeed: Math.random() * 2 - 1
+    }));
+
+    let fireworks = [];
+
+    function triggerFireworks() {
+      for (let i = 0; i < 60; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 5 + 2;
+        fireworks.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          color: `hsl(${Math.random() * 360}, 100%, 75%)`,
+          size: Math.random() * 4 + 2,
+          alpha: 1,
+          decay: Math.random() * 0.02 + 0.01
+        });
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      particles.forEach(p => {
+        ctx.save();
+        ctx.globalAlpha = p.opacity;
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+
+        ctx.font = `${p.size * 2}px sans-serif`;
+        if (p.type === 'flower') {
+          ctx.fillText('🌸', -p.size, p.size);
+        } else if (p.type === 'clover') {
+          ctx.fillText('🍀', -p.size, p.size);
+        } else {
+          ctx.fillText('✨', -p.size, p.size);
+        }
+
+        ctx.restore();
+
+        p.y += p.speedY;
+        p.x += p.speedX;
+        p.rotation += p.rotSpeed;
+
+        if (p.y > canvas.height + 20) {
+          p.y = -20;
+          p.x = Math.random() * canvas.width;
+        }
+      });
+
+      fireworks.forEach((fw, index) => {
+        ctx.save();
+        ctx.globalAlpha = fw.alpha;
+        ctx.fillStyle = fw.color;
+        ctx.beginPath();
+        ctx.arc(fw.x, fw.y, fw.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        fw.x += fw.vx;
+        fw.y += fw.vy;
+        fw.vy += 0.05;
+        fw.alpha -= fw.decay;
+
+        if (fw.alpha <= 0) {
+          fireworks.splice(index, 1);
+        }
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
